@@ -108,6 +108,3 @@ Minimized using :
 
 **Pavan Kumar Mukku**
 
-B.Tech. Electrical Engineering  
-Indian Institute of Technology Madras
-
