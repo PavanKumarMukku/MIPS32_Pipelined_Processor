@@ -10,6 +10,25 @@ module bht (
     input [31:0] updated_pc,
     input wire branch_taken
 );
+    /*
+    Implements a 64-entry Branch History Table (BHT) using 2-bit saturating
+    counters for dynamic branch prediction in a pipelined processor.
+    
+    - Uses 2-bit saturating counters.
+    
+    IF Stage :
+        * The lower 6 bits of the Program Counter (PC) are used to index the BHT.
+        * The MSB of the selected 2-bit counter determines the prediction:
+              0 -> Predict Not Taken
+              1 -> Predict Taken
+    EX Stage :
+        * When the actual branch outcome becomes available, the corresponding counter is updated.
+        * If the branch was taken, the counter increments (up to 3).
+        * If the branch was not taken, the counter decrements (down to 0).
+    
+    00[Strongly Not taken] 01[Weakly Not Taken] 10[Weakly Taken] 11[Strongly Taken]          
+    */
+    
     reg [1:0] bht_table [0:63];
     integer i;
 
