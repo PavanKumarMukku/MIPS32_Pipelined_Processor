@@ -101,7 +101,7 @@ module MIPS32_pipeline (
     wire [31:0] actual_target_val;
     wire misprediction;
     wire [31:0] corrected_pc;
-    wire btb_bht_update_en;
+    wire en;
 
     // Destination Registers fo forwarding
     reg [4:0] ID_EX_Dest;
@@ -133,7 +133,7 @@ module MIPS32_pipeline (
         .read_pc(PC),
         .btb_hit(btb_hit),
         .predicted_target(predicted_target),
-        .updated_en(btb_bht_update_en),
+        .updated_en(en),
         .updated_pc(ID_EX_PC),
         .actual_target(actual_target_val)
     );
@@ -143,7 +143,7 @@ module MIPS32_pipeline (
         .rst(rst),
         .read_pc(PC),
         .predict_taken(predict_taken),
-        .updated_en(btb_bht_update_en),
+        .updated_en(en),
         .updated_pc(ID_EX_PC),
         .branch_taken(actual_branch_taken)
     );
@@ -161,7 +161,7 @@ module MIPS32_pipeline (
         end
         else if(misprediction) begin
             PC                <= corrected_pc;
-            IF_ID_IR          <= {NOOPR,26'b0}; // Flush with NOP
+            IF_ID_IR          <= {NOOPR,26'b0};
             IF_ID_NPC         <= 32'h00000000;
             IF_ID_PC          <= 32'h00000000;
             IF_ID_pred_taken  <= 1'b0;
@@ -184,7 +184,8 @@ module MIPS32_pipeline (
                 IF_ID_PC          <= IF_ID_PC;
                 IF_ID_pred_taken  <= 1'b0;
                 IF_ID_pred_target <= 32'h00000000;
-            end else begin
+            end 
+            else begin
                 IF_ID_IR          <= Mem[PC];
                 IF_ID_NPC         <= PC + 1;
                 IF_ID_PC          <= PC;
@@ -217,7 +218,7 @@ module MIPS32_pipeline (
             ID_EX_pred_target <= 32'h00000000;
         end
         else if (misprediction) begin
-            // Flush ID/EX register because this instruction is from the wrong spec path
+            // Flush ID/EX register because we predicted wrong
             ID_EX_A           <= 32'h00000000;
             ID_EX_B           <= 32'h00000000;
             ID_EX_NPC         <= 32'h00000000;
@@ -291,8 +292,8 @@ module MIPS32_pipeline (
     // misprediction when the prediction is wrong or the prediction is correct but the address is wrong
     assign misprediction = (ID_EX_type == BRANCH) && ((ID_EX_pred_taken != actual_branch_taken) || (actual_branch_taken && (ID_EX_pred_target != actual_target_val)));
     assign corrected_pc = actual_branch_taken ? actual_target_val : ID_EX_NPC;
-    //Enabling
-    assign btb_bht_update_en = (ID_EX_type == BRANCH) && (HALTED == 0);
+    // Enabling
+    assign en = (ID_EX_type == BRANCH) && (HALTED == 0);
     // Forwarding Unit
     reg[31 : 0] forwardA, forwardB;
     always @(*) begin
@@ -401,7 +402,7 @@ module MIPS32_pipeline (
     always @(posedge clk) begin
         if (rst) begin
             HALTED <= 1'b0;
-            // Clear all registers in the Register Bank to prevent simulation 'X' states
+            // Clear all registers in the Register Bank
             for (i = 0; i < 32; i = i + 1) begin
                 RegBank[i] <= 32'h00000000;
             end
