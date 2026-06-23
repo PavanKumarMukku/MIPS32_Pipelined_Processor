@@ -1,9 +1,60 @@
 `default_nettype none
 
+// 5-Stage Pipelined MIPS32 Processor with Data Forwarding, Hazard Detection and Dynamic Branch Prediction.
 module MIPS32_pipeline (
     input clk,
     input rst              // Active high synchronous reset
 );
+    /* 
+    Implemnets a 5 staged pipelined MIPS Processor with dynamic Branch Prediction and complete Hazrd Handling.
+    It supports arthmetic, logic, memory, branch and halt operations.
+
+    Stages :
+    1. IF(Instruction Fetch) :
+        - fetches Instructions from Instruction memory
+        - Uses BTB and BHT for dynamic branch functions.
+        - Updates PC based on the prediction
+        
+    2. ID(Instruction Decode) :
+        - decodes the fetched instruction
+        - Read operands from Register file
+        - Detects load use Hazards 
+        - Supports write back to decode register forwarding[RAW Hazard]
+
+    3. EX(Execution) :
+        - Performs ALU operations
+        - Detects branch mispredictions
+        - Implements full data forwarding from EX/MEM and MEM/WB satges
+        - Generate effective addresses for memory operations
+        
+    4. MEM(Memory Access) :
+        - Executes load and store operations.
+
+    5. WB(Write Back) :
+        - Writes ALU or load results back to the register file.
+        - Completes execution of the HLT instruction.
+
+    Features:
+        - Five-stage MIPS32 pipeline.
+        - Dynamic branch prediction using:
+              • 64-entry Branch Target Buffer (BTB)
+              • 64-entry Branch History Table (BHT)
+              • 2-bit saturating branch predictor
+        - Full data forwarding to eliminate RAW hazards.
+        - Load-use hazard detection with pipeline stall insertion.
+        - Branch misprediction detection and pipeline flushing.
+        - Write-first register file (WB → ID forwarding).
+        - Pipeline registers between every stage.
+        - Supports HLT instruction with graceful pipeline termination.
+
+    Supported Instructions:
+        RR-Type : ADD, SUB, AND, OR, SLT, MUL
+        RM-Type : ADDI, SUBI, SLTI
+        Memory  : LW, SW
+        Branch  : BEQZ, BNEQZ
+        Control : HLT, NOP
+    */
+    
     integer i;
     // Between Instruction Fetch and Instruction Decode Stages
     reg [31:0] PC, IF_ID_IR, IF_ID_NPC;
