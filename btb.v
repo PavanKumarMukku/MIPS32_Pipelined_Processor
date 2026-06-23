@@ -10,6 +10,28 @@ module btb (
     input wire updated_en,
     input wire [31:0] updated_pc, actual_target
 );
+    /*
+    Implements a 64-entry direct-mapped Branch Target Buffer (BTB) for predicting the target address
+    of taken branch instructions during the Instruction Fetch (IF) stage.
+
+    - Index      : PC[5:0]
+    - Tag        : PC[31:6]
+    - Each entry stores:
+          • Valid bit
+          • 26-bit tag
+          • 32-bit target address
+
+    IF Stage:
+        * The lower 6 bits of the PC intex the BTB.
+        * Stored tag is comapred with the upper 26 bits of PC.
+        * If entry is valid and the tags match, a hit occurs and stored branch target address is returned.
+    EX Stage:
+        * When a branch instruction is resolved, the BTB is updated with:
+              - Valid bit
+              - Branch PC tag
+              - Actual branch target address
+    */
+    
     reg [31:0] target_table [0:63];
     reg [25:0] tag_table [0:63];
     reg valid_table [0:63];
