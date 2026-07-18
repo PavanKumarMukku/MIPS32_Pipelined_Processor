@@ -63,18 +63,20 @@ module MIPS32_pipeline (
 
     // Between Instruction Decode and Execution Stages
     reg [31:0] ID_EX_IR, ID_EX_NPC, ID_EX_A, ID_EX_B, ID_EX_Imm;
-    reg [2:0]  ID_EX_type, EX_MEM_type, MEM_WB_type;
+    reg [2:0]  ID_EX_type;
     reg ID_EX_RegWrite;                        // for Data Hazard
     reg [31:0] ID_EX_PC, ID_EX_pred_target;
     reg ID_EX_pred_taken;
 
     // Between Execution and Memory Stages
     reg [31:0] EX_MEM_IR, EX_MEM_ALUOut, EX_MEM_B;
+    reg [2:0]  EX_MEM_type;
     reg  EX_MEM_cond;
     reg EX_MEM_RegWrite;                       // for Data Hazard
 
     // Between Memory and Write Back Stages
     reg [31:0] MEM_WB_IR, MEM_WB_ALUOut, MEM_WB_LMD;
+    reg [2:0]  MEM_WB_type;
     reg MEM_WB_RegWrite;                       // for Data Hazard
 
     reg [31:0] RegBank [0:31];                 // Register Bank(32 x 32)
