@@ -26,7 +26,7 @@ module bht (
         * If the branch was taken, the counter increments (up to 3).
         * If the branch was not taken, the counter decrements (down to 0).
     
-    00[Strongly Not taken] 01[Weakly Not Taken] 10[Weakly Taken] 11[Strongly Taken]          
+    00[Strongly Not taken] <-> 01[Weakly Not Taken] <-> 10[Weakly Taken] <-> 11[Strongly Taken]          
     */
     
     reg [1:0] bht_table [0:63];
