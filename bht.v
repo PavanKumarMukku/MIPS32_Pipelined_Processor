@@ -47,8 +47,7 @@ module bht (
             end
         end
         else if (updated_en) begin
-            if (branch_taken) begin
-                // 
+            if (branch_taken) begin 
                 bht_table[updated_index] <= (bht_table[updated_index] == 2'b11) ? 2'b11 : bht_table[updated_index] + 1'b1;
             end
             else begin
