@@ -170,9 +170,9 @@ module MIPS32_pipeline (
             IF_ID_pred_target <= 32'h00000000;
         end
         else if(load_stall) begin
-            PC        <= PC;
-            IF_ID_IR  <= IF_ID_IR;
-            IF_ID_NPC <= IF_ID_NPC;
+            PC                <= PC;
+            IF_ID_IR          <= IF_ID_IR;
+            IF_ID_NPC         <= IF_ID_NPC;
             IF_ID_PC          <= IF_ID_PC;
             IF_ID_pred_taken  <= IF_ID_pred_taken;
             IF_ID_pred_target <= IF_ID_pred_target;
